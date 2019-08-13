@@ -1,0 +1,60 @@
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id 'java'
+    id 'org.javamodularity.moduleplugin' version '1.5.0'
+    id 'org.beryx.jlink' version '2.14.0'
+}
+
+sourceCompatibility = 12
+
+group = 'com.kneelawk'
+version = '0.0.1-SNAPSHOT'
+
+project.ext.jfxVersion = '11.0.2'
+project.ext.springVersion = '2.1.6.RELEASE'
+project.ext.guavaVersion = '28.0-jre'
+project.ext.commonsLangVersion = '3.9'
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        project.ext.jfxPlatform = "linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.jfxPlatform = "mac"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.jfxPlatform = "win"
+        break
+}
+
+patchModules.config = [
+        "java.annotation=jsr305-3.0.2.jar"
+]
+
+mainClassName = "$moduleName/com.kneelawk.springtest.SpringTest"
+
+run {
+    moduleOptions {
+        addModules = [
+                'java.sql'
+        ]
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation "org.openjfx:javafx-base:$jfxVersion:$jfxPlatform"
+    implementation "org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform"
+    implementation "org.openjfx:javafx-controls:$jfxVersion:$jfxPlatform"
+    implementation "org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform"
+
+    implementation "org.springframework.boot:spring-boot-starter-webflux:$springVersion"
+
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLangVersion"
+}
+
